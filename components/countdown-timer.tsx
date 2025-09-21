@@ -19,43 +19,42 @@ export function CountdownTimer({
   onComplete,
 }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  })
-  const [isComplete, setIsComplete] = useState(false)
+  days: 0,
+  hours: 0,
+  minutes: 0,
+  seconds: 5, // awalnya 5 detik
+})
+const [isComplete, setIsComplete] = useState(false)
 
-  useEffect(() => {
-    // bikin target hari ini jam 23:59:59
-    const now = new Date()
-    const target = new Date()
-    target.setHours(23, 59, 59, 999)
+useEffect(() => {
+  const now = new Date().getTime()
+  const target = now + 5000 // 5 detik ke depan
 
-    const timer = setInterval(() => {
-      const now = new Date().getTime()
-      const difference = target.getTime() - now
+  const timer = setInterval(() => {
+    const now = new Date().getTime()
+    const difference = target - now
 
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((difference % (1000 * 60)) / 1000),
-        })
-      } else {
-        setIsComplete(true)
-        onComplete?.()
-        clearInterval(timer)
-      }
-    }, 1000)
+    if (difference > 0) {
+      setTimeLeft({
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((difference % (1000 * 60)) / 1000),
+      })
+    } else {
+      setIsComplete(true)
+      onComplete?.()
+      clearInterval(timer)
+    }
+  }, 1000)
 
-    return () => clearInterval(timer)
-  }, [onComplete])
+  return () => clearInterval(timer)
+}, [onComplete])
 
-  if (isComplete) {
-    return null
-  }
+if (isComplete) {
+  return null
+}
+
 
   return (
     <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-border">
